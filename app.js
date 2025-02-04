@@ -5,8 +5,7 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
-const Product = require('./models/product');
-const User = require('./models/user');
+const { User, Product, Cart, CartItem } = require('./models/associations'); // Ensure associations are set before syncing
 
 const app = express();
 
@@ -33,21 +32,24 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.hasMany(Product);
-
+console.log('Starting Sequelize sync...');
 sequelize
-  .sync()
-  .then((result) => {
+  .sync({ alter: true })
+  .then(() => {
+    console.log('Database sync complete.');
     return User.findByPk(1);
   })
   .then((user) => {
+    console.log('Checking if user exists...');
     if (!user) {
-      return User.create({ name: 'Max', email: 'testemai@test.com' });
+      console.log('Creating test user...');
+      return User.create({ name: 'Max', email: 'testemail@test.com' });
     }
     return user;
   })
   .then((user) => {
+    // console.log('User found/created:', user);
+    console.log('Listening on port 3000');
     app.listen(3000);
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log('Error during sync:', err));

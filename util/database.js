@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
   {
     dialect: process.env.DB_DIALECT,
     host: process.env.DB_HOST,
+    logging: console.log,
   }
 );
 
