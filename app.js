@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
-const { User, Product, Cart, CartItem } = require('./models/associations'); // Ensure associations are set before syncing
+const { User } = require('./models/associations'); // Ensure associations are set before syncing
 
 const app = express();
 
@@ -49,6 +49,10 @@ sequelize
   })
   .then((user) => {
     // console.log('User found/created:', user);
+    return user.createCart();
+    app.listen(3000);
+  })
+  .then((cart) => {
     console.log('Listening on port 3000');
     app.listen(3000);
   })
